@@ -1,0 +1,4 @@
+<?php
+
+$s_plugin_MantisExtAuth_title = 'External Authentication';
+$s_plugin_MantisExtAuth_description = 'A plugin provides an external authentication (via AUTH_USER or REMOTE_USER server variables).';
