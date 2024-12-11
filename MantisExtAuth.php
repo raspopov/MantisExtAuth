@@ -19,7 +19,7 @@
  */
 
 class MantisExtAuthPlugin extends MantisPlugin {
- 
+
 	/**
 	 * A method that populates the plugin information and minimum requirements.
 	 * @return void
@@ -27,7 +27,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 	function register() {
 		$this->name = plugin_lang_get( 'title' );
 		$this->description = plugin_lang_get( 'description' );
-		
+
 		$this->version = '1.0.0';
 		$this->requires = array(
 			'MantisCore' => '2.0',
@@ -37,7 +37,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 		$this->contact = 'raspopov@cherubicsoft.com';
 		$this->url = 'https://github.com/raspopov/MantisExtAuth';
 	}
- 
+
 	/**
 	 * Register event hooks for plugin.
 	 * @return array
@@ -48,14 +48,14 @@ class MantisExtAuthPlugin extends MantisPlugin {
 			'EVENT_AUTH_USER_FLAGS' => 'flags'
 		);
 	}
-	
+
 	/**
 	 * Gets set of flags for authentication for the specified user.
 	 * @param string $p_event The name for the event
 	 * @param array  $p_args  The event arguments
 	 * @return AuthFlags The auth flags object to use
 	 */
-	function flags( $p_event_name, $p_args ) {	
+	function flags( $p_event_name, $p_args ) {
 		$t_flags = new AuthFlags();
 
 		# Passwords managed externally
@@ -74,6 +74,8 @@ class MantisExtAuthPlugin extends MantisPlugin {
 	 * @return void
 	 */
 	function login( $p_event_name, $p_args ) {
+		global $g_script_login_cookie;
+
 		if( auth_is_user_authenticated() ) {
 			# Already authenticated
 			return;
@@ -85,27 +87,39 @@ class MantisExtAuthPlugin extends MantisPlugin {
 		$t_full_username = explode( '\\', $t_auth_user );
 		$t_username = end( $t_full_username );
 
-		if( !$t_username || !auth_attempt_script_login( $t_username ) ) {
-			# Denied
+		if( !$t_username ) {
+			# Access denied
 			return;
 		}
 
 		$t_user_id = auth_get_user_id_from_login_name( $t_username );
-		auth_set_cookies( $t_user_id );
-		auth_set_tokens( $t_user_id );
-		
-		current_user_set( $t_user_id );
-		
-		user_increment_login_count( $t_user_id );
+		if( $t_user_id === false ) {
+			user_create( $t_username, auth_generate_random_password() );
 
-		# Sync with LDAP
-		if( ON == config_get_global( 'use_ldap_realname' ) ) {
-			user_set_fields( $t_user_id,
-				[ 'realname' => ldap_realname( $t_user_id ) ] );
+			$t_user_id = user_get_id_by_name( $t_username );
+			if( $t_user_id === false ) {
+				# Database error
+				return;
+			}
+
+			# Sync with LDAP
+			if( ON == config_get_global( 'use_ldap_realname' ) ) {
+				user_set_realname( $t_user_id, ldap_realname( $t_user_id ) );
+			}
+			if( ON == config_get_global( 'use_ldap_email' ) ) {
+				user_set_email( $t_user_id, ldap_email( $t_user_id ) );
+			}
 		}
-		if( ON == config_get_global( 'use_ldap_email' ) ) {
-			user_set_fields( $t_user_id,
-				[ 'email' => ldap_email( $t_user_id ) ] );
+
+		if( !auth_login_user( $t_user_id ) ) {
+			# Disabled account
+			return;
 		}
+
+		# Set cookie now to bypass login page
+		# i.e. auth_is_user_authenticated() later call should return true
+		$g_script_login_cookie = user_get_field( $t_user_id, 'cookie_string' );
+
+		current_user_set( $t_user_id );
 	}
 }
