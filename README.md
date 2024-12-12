@@ -48,3 +48,7 @@ LoadModule auth_ntlm_module modules/mod_authn_ntlm.so
 	</RequireAny>
 </Location>
 ```
+
+## Similar plugins
+
+- [adLogin](https://github.com/mantisbt-plugins/adLogin) by Cas Nuy
