@@ -29,9 +29,9 @@ class MantisExtAuthPlugin extends MantisPlugin {
 		$this->description = plugin_lang_get( 'description' );
 
 		$this->version = '1.0.0';
-		$this->requires = array(
+		$this->requires = [
 			'MantisCore' => '2.0',
-		);
+		];
 
 		$this->author = 'Nikolay Raspopov';
 		$this->contact = 'raspopov@cherubicsoft.com';
@@ -43,10 +43,10 @@ class MantisExtAuthPlugin extends MantisPlugin {
 	 * @return array
 	 */
 	function hooks() {
-		return array(
+		return [
 			'EVENT_CORE_READY' => 'login',
 			'EVENT_AUTH_USER_FLAGS' => 'flags'
-		);
+		];
 	}
 
 	/**
@@ -81,7 +81,8 @@ class MantisExtAuthPlugin extends MantisPlugin {
 			return;
 		}
 
-		$t_auth_user = @$_SERVER['AUTH_USER'] ?: @$_SERVER['REMOTE_USER'] ?: '';
+		$t_auth_user = isset( $_SERVER['AUTH_USER'] ) ? $_SERVER['AUTH_USER'] :
+			( isset( $_SERVER['REMOTE_USER'] ) ? $_SERVER['REMOTE_USER'] : '' );
 
 		# Remove the domain name
 		$t_full_username = explode( '\\', $t_auth_user );
