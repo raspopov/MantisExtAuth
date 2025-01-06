@@ -55,7 +55,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 	 * @param array  $p_args  The event arguments
 	 * @return AuthFlags The auth flags object to use
 	 */
-	function flags( $p_event_name, $p_args ) {
+	function flags( $p_event, $p_args ) {
 		$t_flags = new AuthFlags();
 
 		# Passwords managed externally
@@ -73,7 +73,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 	 * @param array  $p_args  The event arguments
 	 * @return void
 	 */
-	function login( $p_event_name, $p_args ) {
+	function login( $p_event, $p_args ) {
 		global $g_script_login_cookie;
 
 		if( auth_is_user_authenticated() ) {
