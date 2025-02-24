@@ -17,7 +17,7 @@ This plugin makes MantisBT believe that the user whose name is specified in the 
 
 - None
 
-**Note:** For MantisBT 2.27 you need to set a `$g_login_method = LDAP;` in **config_inc.php** to retrieve user data (real name, mail, etc) directly from Active Directory.
+**Note:** For MantisBT 2.27 you need to set a `$g_login_method = LDAP;` in **config_inc.php** to retrieve user data (real name, mail, etc) directly from Active Directory, and a `$g_reauthentication = OFF;` to skip re-authentication when plugin is not temporarily loaded during some MantisBT operation like plugin installation or update.
 
 ## Application use
 
@@ -43,6 +43,7 @@ LoadModule auth_ntlm_module modules/mod_authn_ntlm.so
 	NTLMAuth On
 	NTLMOmitDomain On
 	<RequireAny>
+		AuthMerging And
 		Require sspi-group "DevOps"
 		Require sspi-user "Administrator"
 	</RequireAny>

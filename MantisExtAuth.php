@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with MantisExtAuth.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2024 Nikolay Raspopov <raspopov@cherubicsoft.com>
+ * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
 class MantisExtAuthPlugin extends MantisPlugin {
 
 	/**
 	 * A method that populates the plugin information and minimum requirements.
+	 *
 	 * @return void
 	 */
 	function register() {
@@ -40,6 +41,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 
 	/**
 	 * Register event hooks for plugin.
+	 *
 	 * @return array
 	 */
 	function hooks() {
@@ -51,6 +53,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 
 	/**
 	 * Gets set of flags for authentication for the specified user.
+	 *
 	 * @param string $p_event The name for the event
 	 * @param array  $p_args  The event arguments
 	 * @return AuthFlags The auth flags object to use
@@ -69,6 +72,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 
  	/**
 	 * Login after the core system is loaded.
+	 *
 	 * @param string $p_event The name for the event
 	 * @param array  $p_args  The event arguments
 	 * @return void
@@ -81,8 +85,7 @@ class MantisExtAuthPlugin extends MantisPlugin {
 			return;
 		}
 
-		$t_auth_user = isset( $_SERVER['AUTH_USER'] ) ? $_SERVER['AUTH_USER'] :
-			( isset( $_SERVER['REMOTE_USER'] ) ? $_SERVER['REMOTE_USER'] : '' );
+		$t_auth_user = $_SERVER['AUTH_USER'] ?? $_SERVER['REMOTE_USER'] ?? '';
 
 		# Remove the domain name
 		$t_full_username = explode( '\\', $t_auth_user );
