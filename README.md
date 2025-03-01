@@ -4,7 +4,11 @@
 
 ## Presentation
 
-This plugin makes MantisBT believe that the user whose name is specified in the `AUTH_USER` or `REMOTE_USER` web server variables is already authenticated. The entire authentication process is passed to the web server.
+The plugin was originally designed for seamless integration with Microsoft Active Directory (AD) domains. It uses a combination of NTLM authentication using the Apache web server's `mod_authn_ntml` module and LDAP user data retrieval directly from AD.
+
+To get the avatars of AD users, you can use my other plugin: [MantisLdapAvatar](https://github.com/raspopov/MantisLdapAvatar).
+
+This plugin makes MantisBT believe that the user whose name is specified in the `AUTH_USER` or `REMOTE_USER` web server variables is already authenticated. The entire authentication process is passed to the web server. The users are created automatically.
 
 ## Installation
 
@@ -53,3 +57,4 @@ LoadModule auth_ntlm_module modules/mod_authn_ntlm.so
 ## Similar plugins
 
 - [adLogin](https://github.com/mantisbt-plugins/adLogin) by Cas Nuy
+- [BasicAuth](https://github.com/davewood/mantis-basic-auth) by David Schmidt (outdated)
